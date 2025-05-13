@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contract Builder</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 0; }
+    .form-container { max-width: 600px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .form-step { display: none; }
+    .form-step.active { display: block; }
+    .question { margin-bottom: 20px; }
+    .question label { display: block; font-weight: bold; margin-bottom: 8px; }
+    input, select { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+    .actions { display: flex; justify-content: space-between; margin-top: 20px; }
+    button { padding: 10px 20px; font-size: 16px; border: none; border-radius: 4px; cursor: pointer; }
+    .btn-primary { background-color: #007bff; color: #fff; }
+    .btn-secondary { background-color: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-step active" id="step-1">
+      <div class="question"><label>Event Name</label><input type="text" id="event-name" /></div>
+      <div class="question"><label>Event Date</label><input type="date" id="event-date" /></div>
+      <div class="question"><label>Event Location</label><input type="text" id="event-location" /></div>
+      <div class="question"><label>Venue Address (optional)</label><input type="text" id="venue-address" /></div>
+      <div class="actions"><span></span><button class="btn-primary" onclick="nextStep(1)">Next</button></div>
+    </div>
+
+    <div class="form-step" id="step-2">
+      <div class="question"><label>Organizer Name</label><input type="text" id="organizer-name" /></div>
+      <div class="question"><label>Contact Email</label><input type="email" id="organizer-email" /></div>
+      <div class="question"><label>Phone (optional)</label><input type="text" id="organizer-phone" /></div>
+      <div class="actions"><button class="btn-secondary" onclick="prevStep(2)">Back</button><button class="btn-primary" onclick="nextStep(2)">Next</button></div>
+    </div>
+
+    <div class="form-step" id="step-3">
+      <div class="question"><label>Number of Workshops</label><input type="text" id="num-workshops" /></div>
+      <div class="question"><label>Workshop Themes</label><input type="text" id="workshop-themes" /></div>
+      <div class="question"><label>Social Dance Hours</label><input type="text" id="social-hours" /></div>
+      <div class="question"><label>DJ or MC Duties</label><input type="text" id="dj-duties" /></div>
+      <div class="actions"><button class="btn-secondary" onclick="prevStep(3)">Back</button><button class="btn-primary" onclick="nextStep(3)">Next</button></div>
+    </div>
+
+    <div class="form-step" id="step-4">
+      <div class="question"><label>Performance Fee</label><input type="text" id="performance-fee" /></div>
+      <div class="question"><label>Currency</label><input type="text" id="payment-currency" /></div>
+      <div class="question"><label>Payment Method</label><input type="text" id="payment-method" /></div>
+      <div class="question"><label>Who is booking flights?</label><input type="text" id="flight-responsibility" /></div>
+      <div class="question"><label>Departure City</label><input type="text" id="departure-city" /></div>
+      <div class="question"><label>Arrival Date</label><input type="date" id="arrival-date" /></div>
+      <div class="question"><label>Departure Date</label><input type="date" id="departure-date" /></div>
+      <div class="question"><label>Hotel Nights Covered</label><input type="text" id="hotel-nights" /></div>
+      <div class="question"><label>Accommodation Details</label><input type="text" id="accommodation-details" /></div>
+      <div class="question">
+        <label>Meals</label>
+        <label>Breakfast</label>
+        <select id="meal-breakfast"><option value="covered">Covered</option><option value="not-covered">Not Covered</option></select>
+        <label>Lunch</label>
+        <select id="meal-lunch"><option value="covered">Covered</option><option value="not-covered">Not Covered</option></select>
+        <label>Dinner</label>
+        <select id="meal-dinner"><option value="covered">Covered</option><option value="not-covered">Not Covered</option></select>
+      </div>
+      <div class="actions"><button class="btn-secondary" onclick="prevStep(4)">Back</button><button class="btn-primary" onclick="nextStep(4)">Next</button></div>
+    </div>
+
+    <div class="form-step" id="step-5">
+      <h3>Review & Submit</h3>
+      <div id="summary"></div>
+      <div class="actions">
+        <button class="btn-secondary" onclick="prevStep(5)">Back</button>
+        <button class="btn-primary" onclick="submitForm()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function nextStep(current) {
+      const currentStep = document.getElementById(`step-${current}`);
+      const nextStep = document.getElementById(`step-${current + 1}`);
+      if (!currentStep || !nextStep) {
+        console.warn(`Step ${current} or ${current + 1} not found.`);
+        return;
+      }
+      currentStep.classList.remove('active');
+      nextStep.classList.add('active');
+    }
+
+    function prevStep(current) {
+      const currentStep = document.getElementById(`step-${current}`);
+      const prevStep = document.getElementById(`step-${current - 1}`);
+      if (!currentStep || !prevStep) {
+        console.warn(`Step ${current} or ${current - 1} not found.`);
+        return;
+      }
+      currentStep.classList.remove('active');
+      prevStep.classList.add('active');
+    }
+
+    function submitForm() {
+  const contractData = {
+    eventName: document.getElementById('event-name').value,
+    eventDate: document.getElementById('event-date').value,
+    eventLocation: document.getElementById('event-location').value,
+    venueAddress: document.getElementById('venue-address').value,
+    organizerName: document.getElementById('organizer-name').value,
+    organizerEmail: document.getElementById('organizer-email').value,
+    organizerPhone: document.getElementById('organizer-phone').value,
+    numWorkshops: document.getElementById('num-workshops').value,
+    workshopThemes: document.getElementById('workshop-themes').value,
+    socialHours: document.getElementById('social-hours').value,
+    djDuties: document.getElementById('dj-duties').value,
+    performanceFee: document.getElementById('performance-fee').value,
+    paymentCurrency: document.getElementById('payment-currency').value,
+    paymentMethod: document.getElementById('payment-method').value,
+    flightResponsibility: document.getElementById('flight-responsibility').value,
+    departureCity: document.getElementById('departure-city').value,
+    arrivalDate: document.getElementById('arrival-date').value,
+    departureDate: document.getElementById('departure-date').value,
+    hotelNights: document.getElementById('hotel-nights').value,
+    accommodationDetails: document.getElementById('accommodation-details').value,
+    meals: {
+      breakfast: document.getElementById('meal-breakfast').value,
+      lunch: document.getElementById('meal-lunch').value,
+      dinner: document.getElementById('meal-dinner').value
+    }
+  };
+
+  const contractHTML = `
+    <h2>Contract Agreement</h2>
+    <p><strong>Event:</strong> ${contractData.eventName} (${contractData.eventDate})</p>
+    <p><strong>Location:</strong> ${contractData.eventLocation}</p>
+    <p><strong>Venue:</strong> ${contractData.venueAddress}</p>
+    <p><strong>Organizer:</strong> ${contractData.organizerName} (${contractData.organizerEmail})</p>
+    <hr>
+    <h3>Services</h3>
+    <p>Workshops: ${contractData.numWorkshops} - ${contractData.workshopThemes}</p>
+    <p>Social Hours: ${contractData.socialHours}</p>
+    <p>DJ / MC Duties: ${contractData.djDuties}</p>
+    <hr>
+    <h3>Payment</h3>
+    <p>Fee: ${contractData.performanceFee} ${contractData.paymentCurrency}</p>
+    <p>Method: ${contractData.paymentMethod}</p>
+    <hr>
+    <h3>Travel & Accommodation</h3>
+    <p>Flights by: ${contractData.flightResponsibility}</p>
+    <p>Departure City: ${contractData.departureCity}</p>
+    <p>Arrival: ${contractData.arrivalDate}, Departure: ${contractData.departureDate}</p>
+    <p>Hotel Nights: ${contractData.hotelNights}</p>
+    <p>Accommodation: ${contractData.accommodationDetails}</p>
+    <hr>
+    <h3>Meals</h3>
+    <p>Breakfast: ${contractData.meals.breakfast}</p>
+    <p>Lunch: ${contractData.meals.lunch}</p>
+    <p>Dinner: ${contractData.meals.dinner}</p>
+  `;
+
+  document.body.innerHTML = `<div class='form-container'>${contractHTML}</div>`;
+}
+  </script>
+</body>
+</html>
